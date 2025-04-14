@@ -1,0 +1,17 @@
+# 数据库配置
+jdbcUrl = jdbc:mysql://gd.tetuijiudian.cn:3306/gaode66?useSSL=false&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull
+user=gaode24
+password=Redbull2266_
+
+
+#jdbcUrl = jdbc:mysql://rm-2zeusjfev51pejx51qo.mysql.rds.aliyuncs.com:3306/aligd1?useSSL=false&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull
+#user=gdalilzh
+#password=lzh332211
+
+# jfinal 开发模式
+devMode = false
+
+# enjoy 模板引擎开发模式
+engineDevMode = false
+
+

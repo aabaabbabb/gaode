@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="ehcache.xsd"
+         updateCheck="false" monitoring="autodetect"
+         dynamicConfig="true">
+
+  <diskStore path="java.io.tmpdir"/>
+
+  <defaultCache
+          maxEntriesLocalHeap="10000"
+          eternal="false"
+          timeToIdleSeconds="120"
+          timeToLiveSeconds="120"
+
+          diskSpoolBufferSizeMB="30"
+          maxEntriesLocalDisk="10000000"
+          diskExpiryThreadIntervalSeconds="120"
+          memoryStoreEvictionPolicy="LRU"
+          statistics="false">
+    <persistence strategy="localTempSwap"/>
+  </defaultCache>
+  <!-- 数据库中的调用-->
+  <cache name="price/list"
+         maxEntriesLocalHeap="10000"
+         eternal="false"
+         timeToIdleSeconds="60"
+         timeToLiveSeconds="60"
+         overflowToDisk="false"
+  />
+
+  <!-- 控制器中的-->
+  <cache name="getPriceDB"
+         maxEntriesLocalHeap="10000"
+         eternal="false"
+         timeToIdleSeconds="30"
+         timeToLiveSeconds="30"
+         overflowToDisk="false"
+  />
+  <!--  原来存是600秒，但是加了一些down属性，改小点吧  -->
+  <cache name="getHotelInfo/findById"
+         maxEntriesLocalHeap="10000"
+         eternal="false"
+         timeToIdleSeconds="10"
+         timeToLiveSeconds="10"
+         overflowToDisk="false"
+  />
+
+
+</ehcache>
