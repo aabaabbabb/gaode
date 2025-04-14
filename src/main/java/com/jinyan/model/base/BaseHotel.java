@@ -51,6 +51,21 @@ public abstract class BaseHotel<M extends BaseHotel<M>> extends Model<M> impleme
 		return getInt("ElongId");
 	}
 	
+	
+	/**
+	 * 艺龙酒店id
+	 */
+	public void setCtripHotelID(java.lang.Integer CtripHotelID) {
+		set("CtripHotelID", CtripHotelID);
+	}
+	
+	/**
+	 * 艺龙酒店id
+	 */
+	public java.lang.Integer getCtripHotelID() {
+		return getInt("CtripHotelID");
+	}
+	
 	/**
 	 * 酒店中文名称
 	 */

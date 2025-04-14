@@ -1,5 +1,13 @@
 package com.jinyan.controller;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -7,10 +15,7 @@ import com.google.common.base.Strings;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Clear;
 import com.jfinal.aop.Inject;
-import com.jfinal.core.ActionKey;
 import com.jfinal.core.Path;
-import com.jfinal.kit.JsonKit;
-import com.jfinal.kit.LogKit;
 import com.jfinal.plugin.activerecord.Record;
 import com.jinyan.common.Constant;
 import com.jinyan.common.GdlogInterceptor;
@@ -23,9 +28,6 @@ import com.jinyan.utils.CommonUtils;
 import com.jinyan.utils.ResponseUtils;
 import com.jinyan.utils.ResponseUtilsOutResponse;
 import com.jinyan.utils.StringUtils;
-import org.apache.log4j.Logger;
-
-import java.util.*;
 
 // 这个类 用来处理，其它相关联环竟中，需要处理的一些接口，
 
@@ -266,7 +268,6 @@ public class HotelMallController extends BaseController {
 		Iterator<Map.Entry<String,List>> iterable=RoomType_RatePlanids.entrySet().iterator();
 		if(iterable.hasNext()){ //只取一个room  while 改成 if
 			Map.Entry<String,List>entry=iterable.next();
-			System.out.println(entry.getKey()+"->"+entry.getValue());
 
 			String key=entry.getKey();
 			List valueRatePlanids=entry.getValue();

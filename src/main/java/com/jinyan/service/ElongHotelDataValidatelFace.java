@@ -62,8 +62,8 @@ public class ElongHotelDataValidatelFace {
         JSONObject dataRequest = new JSONObject();
         //{"ArrivalDate":"2023-08-29","DepartureDate":"2023-08-30","HotelIds":"40101006","Options":"2","PaymentType":"All"}
 
-       String ArrivalDate="2023-08-29";
-       String DepartureDate="2023-08-30";
+       String ArrivalDate="2025-03-29";
+       String DepartureDate="2025-03-30";
        String EarliestArrivalTime=ArrivalDate+" 14:00:00";
        String LatestArrivalTime=DepartureDate+" 17:00:00";
        String HotelId= "40101006";

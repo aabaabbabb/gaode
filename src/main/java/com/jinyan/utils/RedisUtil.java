@@ -23,7 +23,8 @@ public class RedisUtil
 			config.setMaxIdle(5);
 //			config.setMaxIdle(50); //高并发时，把空闲数量调高些
 
-			//创建redis连接池 gd.tetuijiudian.cn
+
+			//创建redis连接池
 			pool = new JedisPool(config,"gd.tetuijiudian.cn",6379,2000,"3er6J2JQ1og71m");
 		}
 		return pool;
@@ -35,5 +36,10 @@ public class RedisUtil
 	public static Jedis getConn()
 	{
 		return getPool().getResource();
+	}
+	
+	public static void main(String[] args) {
+	Jedis jedis=	RedisUtil.getConn();
+	System.out.println(jedis);
 	}
 }

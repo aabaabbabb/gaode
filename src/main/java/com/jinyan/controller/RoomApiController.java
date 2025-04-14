@@ -3,33 +3,41 @@ package com.jinyan.controller;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.parser.JSONLexer;
-import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.google.common.base.Strings;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Clear;
 import com.jfinal.aop.Inject;
-import com.jfinal.core.ActionKey;
 import com.jfinal.core.Path;
 import com.jfinal.kit.HttpKit;
-import com.jfinal.kit.JsonKit;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.ehcache.CacheKit;
 import com.jinyan.common.Constant;
 import com.jinyan.common.GdlogInterceptor;
 import com.jinyan.controller.base.BaseController;
+import com.jinyan.kit.StringKit;
 import com.jinyan.model.EbookingRoomType;
 import com.jinyan.model.Hotel;
 import com.jinyan.model.Pic;
-import com.jinyan.service.*;
-import com.jinyan.utils.*;
-
-import redis.clients.jedis.Jedis;
+import com.jinyan.service.HotelService;
+import com.jinyan.service.LedisdbCache;
+import com.jinyan.service.PriceCache;
+import com.jinyan.service.PriceDbService;
+import com.jinyan.service.RedisMemCache;
+import com.jinyan.service.RoomTypeDbService;
+import com.jinyan.utils.CommonUtils;
+import com.jinyan.utils.ResponseUtils;
+import com.jinyan.utils.ResponseUtilsOutResponse;
+import com.jinyan.utils.StringUtils;
 
 //日志拦截器，影响不大
 @Clear
@@ -838,14 +846,14 @@ public class RoomApiController extends BaseController {
 			}
 
 
-			JSONArray gaode_RoomInfos = new JSONArray();//返回给高德的房型数组
+			//JSONArray gaode_RoomInfos = new JSONArray();//返回给高德的房型数组
 
-			List<Map<String, Object>> RatePlans_list=new ArrayList<Map<String,Object>>(); //
+			//List<Map<String, Object>> RatePlans_list=new ArrayList<Map<String,Object>>(); //
 
 			List<Record> records= pdbs.getPriceList(  elongid,  StartDate,    EndDate,  RatePlanID,  RoomID);
 
-			Map<String, Object> RatePlans_Map=new HashMap<>(); //
-			Map<String, Object> RoomInfos_Map=new HashMap<>(); //
+			//Map<String, Object> RatePlans_Map=new HashMap<>(); //
+			//Map<String, Object> RoomInfos_Map=new HashMap<>(); //
 
 			Map<String, List> RoomType_RatePlanids=new HashMap<>(); // roomid key, rateplanids 逗号list
 			Map<String, List> RatePlanid_Dates=new HashMap<>(); //
@@ -921,7 +929,6 @@ public class RoomApiController extends BaseController {
 			Iterator<Map.Entry<String,List>> iterable=RoomType_RatePlanids.entrySet().iterator();
 			while(iterable.hasNext()){
 				Map.Entry<String,List>entry=iterable.next();
-				System.out.println(entry.getKey()+"->"+entry.getValue());
 
 				String key=entry.getKey();
 				List valueRatePlanids=entry.getValue();
@@ -1201,8 +1208,34 @@ public class RoomApiController extends BaseController {
 
 			}
 
+			
+			int days=StringKit.getDays(StartDate, EndDate);
+			
 			room_info_json.put("RoomInfos", RoomInfos);
 
+			if(room_info_json!=null) {
+				JSONArray room_infos=room_info_json.getJSONArray("RoomInfos");
+				Iterator<Object> iterator_room_infos=room_infos.iterator();
+				while (iterator_room_infos.hasNext()) {
+				    JSONObject room=(JSONObject)iterator_room_infos.next();
+				    JSONArray RatePlans=room.getJSONArray("RatePlans");
+				    Iterator<Object> iterator=RatePlans.iterator();
+				    while (iterator.hasNext()) {
+				    	JSONObject plan=(JSONObject)iterator.next();
+				    	JSONObject PriceInfo=plan.getJSONObject("PriceInfo");
+						if(PriceInfo!=null) {
+							JSONArray DailyPrices=PriceInfo.getJSONArray("DailyPrices");
+							if(DailyPrices.size()<days) {
+								iterator_room_infos.remove();
+								break;
+							}
+						}
+					} 
+				}
+			}
+			
+			
+			//System.out.println(room_info_json);
 
 			ResponseUtils res = new ResponseUtils();
 			res.setCode("10000");
@@ -1216,6 +1249,8 @@ public class RoomApiController extends BaseController {
 
 			pdbs.ReordPrice(Long.parseLong(HotelID),elongid,userid,userpid,HotelName,utc_timestamp,  app_id,  RatePlanID,RoomID ,StartDate,EndDate,resOut, false);
 
+			
+			
 			renderJson(resOut);
 
 		}catch (Exception e){
@@ -1364,7 +1399,6 @@ public class RoomApiController extends BaseController {
 			Iterator<Map.Entry<String,List>> iterable=RoomType_RatePlanids.entrySet().iterator();
 			while(iterable.hasNext()){
 				Map.Entry<String,List>entry=iterable.next();
-				System.out.println(entry.getKey()+"->"+entry.getValue());
 
 				String key=entry.getKey();
 				List valueRatePlanids=entry.getValue();
@@ -1761,7 +1795,6 @@ public class RoomApiController extends BaseController {
 		Iterator<Map.Entry<String,List>> iterable=RoomType_RatePlanids.entrySet().iterator();
 		while(iterable.hasNext()){
 			Map.Entry<String,List>entry=iterable.next();
-			System.out.println(entry.getKey()+"->"+entry.getValue());
 
 			String key=entry.getKey();
 			List valueRatePlanids=entry.getValue();
@@ -2167,7 +2200,6 @@ public class RoomApiController extends BaseController {
 		Iterator<Map.Entry<String,List>> iterable=RoomType_RatePlanids.entrySet().iterator();
 		while(iterable.hasNext()){
 			Map.Entry<String,List>entry=iterable.next();
-			System.out.println(entry.getKey()+"->"+entry.getValue());
 
 			String key=entry.getKey();
 			List valueRatePlanids=entry.getValue();

@@ -1,47 +1,34 @@
 package com.jinyan.controller;
 
-import java.io.IOException;
 import java.math.BigDecimal;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.serializer.SerializeConfig;
-import com.google.common.base.Strings;
-import com.jfinal.aop.Before;
-import com.jfinal.kit.JsonKit;
-import com.jfinal.plugin.activerecord.Model;
-import com.jinyan.common.GdlogInterceptor;
-import com.jinyan.model.HotelroomChg;
-import com.jinyan.service.HotelStuffService;
-import com.jinyan.service.HotelroomChgService;
-import com.jinyan.utils.*;
-import org.jsoup.helper.StringUtil;
-
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.jfinal.aop.Before;
 import com.jfinal.aop.Clear;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.kit.HttpKit;
-import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
-import com.jfinal.plugin.activerecord.Db;
+import com.jfinal.kit.JsonKit;
 import com.jfinal.plugin.activerecord.Record;
-import com.jfinal.plugin.druid.DruidPlugin;
-import com.jfinal.plugin.redis.Cache;
-import com.jfinal.plugin.redis.Redis;
 import com.jinyan.common.Constant;
+import com.jinyan.common.GdlogInterceptor;
 import com.jinyan.controller.base.BaseController;
 import com.jinyan.model.Hotel;
+import com.jinyan.model.HotelroomChg;
 import com.jinyan.service.HotelService;
-
-import redis.clients.jedis.Jedis;
-
-import javax.servlet.http.HttpServletRequest;
+import com.jinyan.service.HotelStuffService;
+import com.jinyan.service.HotelroomChgService;
+import com.jinyan.utils.CheckSignUtils;
+import com.jinyan.utils.GenerateSignUtils;
+import com.jinyan.utils.ResponseUtils;
+import com.jinyan.utils.ResponseUtilsOutResponse;
+import com.jinyan.utils.StringUtils;
 
 @Clear
 @Before(GdlogInterceptor.class)
@@ -287,7 +274,6 @@ public class HotelApiController extends BaseController {
 			mHotel = hsrv.addHotel(elongIdStr);
 		}
 
-		System.out.println(mHotel);
 		
 		Map<String, String> dataMap = new HashMap<String, String>();
 		dataMap.put("method", "amap.hotel.offline.pushPoiInfoList");
@@ -307,10 +293,14 @@ public class HotelApiController extends BaseController {
 		
 		bizContent.put("GDLon", getGaodeLon);
 		
-		 BigDecimal getGaodeLat = new BigDecimal(mHotel.getGaodeLat());
+		BigDecimal getGaodeLat = new BigDecimal(mHotel.getGaodeLat());
 		bizContent.put("GDLat", getGaodeLat);
 		bizContent.put("HotelType", mHotel.getHotelType());
 		bizContent.put("Telephone", mHotel.getPhone());
+		if(mHotel.getCtripHotelID()!=0) {
+			bizContent.put("CtripHotelID", mHotel.getCtripHotelID());
+		}
+
 
 		// 在推送 GDLat 这个数据的时候，有些问题 ，高德提示类型不正确，不知道为啥 ，我把这个字段去掉了，又可以了
 

@@ -11,7 +11,6 @@ import com.jfinal.aop.Clear;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.kit.HttpKit;
-import com.jfinal.kit.JsonKit;
 import com.jfinal.plugin.activerecord.Record;
 import com.jinyan.common.GdlogInterceptor;
 import com.jinyan.controller.base.BaseController;
@@ -43,6 +42,16 @@ public class HotelOrderController extends BaseController {
 	static {
 		headerMap.put("Content-Type", "application/x-www-form-urlencoded");
 	}
+	
+	public static void main(String[] args) {
+		String CpOrderID="100210397";
+		Thread t2=new Thread(()->{
+			HttpKit.get("http://api.xiaodianjia.cn/gdapi/create/order?gdid="+CpOrderID);
+		}) ;
+		//给李铁用
+		t2.start();
+
+	}
 
 	/***
 	 * 高德调用酒店下单接口 【高德已连通】 biz_content
@@ -51,12 +60,17 @@ public class HotelOrderController extends BaseController {
 	 */
 //	@ActionKey("/hotel/order/submit")
 	public void submit() {
-
+		
 		try {
 			String biz_content = getPara("biz_content");
 			String CpOrderID = orderService.createOrder(biz_content);
-			//给李铁用
-			HttpKit.get("http://api..cn/gdapi/create/order?gdid="+CpOrderID);
+
+//			Thread t2=new Thread(()->{
+//				HttpKit.get("http://api.xiaodianjia.cn/gdapi/create/order?gdid="+CpOrderID);
+//				System.out.println("推送小店家"+CpOrderID);
+//			}) ;
+//			//给李铁用
+//			t2.start();
 
 			ResponseUtils res = new ResponseUtils();
 

@@ -468,14 +468,14 @@ public abstract class BaseEbookingRoomType<M extends BaseEbookingRoomType<M>> ex
 	/**
 	 * 床宽单位米
 	 */
-	public void setBedWidth(java.math.BigDecimal BedWidth) {
+	public void setBedWidth(java.lang.String BedWidth) {
 		set("BedWidth", BedWidth);
 	}
 	
 	/**
 	 * 床宽单位米
 	 */
-	public java.math.BigDecimal getBedWidth() {
+	public java.lang.String getBedWidth() {
 		return get("BedWidth");
 	}
 	

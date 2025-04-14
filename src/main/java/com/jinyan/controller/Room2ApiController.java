@@ -1,5 +1,12 @@
 package com.jinyan.controller;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -10,6 +17,7 @@ import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
 import com.jfinal.kit.HttpKit;
 import com.jfinal.kit.JsonKit;
+import com.jfinal.kit.StrKit;
 import com.jinyan.common.Constant;
 import com.jinyan.common.GdlogInterceptor;
 import com.jinyan.controller.base.BaseController;
@@ -20,13 +28,13 @@ import com.jinyan.service.HotelService;
 import com.jinyan.service.HotelroomChgService;
 import com.jinyan.service.PriceCache;
 import com.jinyan.service.RoomTypeDbService;
-import com.jinyan.utils.*;
 //import redis.clients.jedis.Jedis;
+import com.jinyan.utils.GenerateSignUtils;
+import com.jinyan.utils.RedisUtil;
+import com.jinyan.utils.ResponseUtils;
+import com.jinyan.utils.StringUtils;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import redis.clients.jedis.Jedis;
 
 @Clear
 @Before(GdlogInterceptor.class)
@@ -45,6 +53,25 @@ public class Room2ApiController extends BaseController {
 	private RoomTypeDbService serverRoomTypeDbService;
 
 //	static Jedis jedis = RedisUtil.getConn();
+	
+	@Clear
+	public void test() {
+		try {
+			System.out.println("到这里了");
+			String jedis_key="123";
+			Jedis jedis = RedisUtil.getConn();
+			jedis.set(jedis_key,"http://gd2.tetuijiudian.com/amapapi/hotel/pushRoomInfo?elongId=17004094");
+			jedis.expire(jedis_key, 86400*20);
+			jedis.close();
+			renderText("成功了！"+jedis);
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			renderText(e.getMessage());
+		}
+		renderText("页面");
+		
+	}
+	
 
 	/**
 	 * 商家推送酒店房型信息
@@ -213,6 +240,8 @@ public class Room2ApiController extends BaseController {
 			roomMap.put("RoomName", room.getName());
 			roomMap.put("Status", "1");
 			String bed=room.getBed();
+			String bedWidth=   room.getBedWidth();
+			
 			String RoomTypeStd= serverRoomTypeDbService.BedConvertGaode(bed) ;
 			roomMap.put("RoomTypeStd", RoomTypeStd); //1-标准间
 			roomMap.put("AddBed", "0"); //0-不能加床 1-可以加床
@@ -222,11 +251,20 @@ public class Room2ApiController extends BaseController {
 			String bedType=bed;
 			if(bedType.contains("双床")) {
 				bedMap.put("BedQuantity",serverRoomTypeDbService.BedQuantityTotal(bed));
-				bedMap.put("BedWidth", serverRoomTypeDbService.BedWidth(bed));
+				if(StrKit.isBlank(bedWidth)||bedWidth.equals("0.0")) {
+					bedMap.put("BedWidth", serverRoomTypeDbService.BedWidth(bed));
+				}else {
+					bedMap.put("BedWidth", bedWidth);
+				}
+				
 				bedMap.put("ChildBedType", serverRoomTypeDbService.BedType(bed));
 			}else {
 				bedMap.put("BedQuantity",serverRoomTypeDbService.BedQuantityTotal(bed));
-				bedMap.put("BedWidth", serverRoomTypeDbService.BedWidth(bed));
+				if(StrKit.isBlank(bedWidth)||bedWidth.equals("0.0")) {
+					bedMap.put("BedWidth", serverRoomTypeDbService.BedWidth(bed));
+				}else {
+					bedMap.put("BedWidth", bedWidth);
+				}
 				bedMap.put("ChildBedType", serverRoomTypeDbService.BedType(bed));
 			}
 			bedList.add(bedMap);
@@ -264,6 +302,7 @@ public class Room2ApiController extends BaseController {
 				roomMap.put("WiredBroadnet",room.getWiredBroadnet());
 
 				String Description=room.getDescription();
+				System.out.println(Description);
 				if(!Strings.isNullOrEmpty(Description)){
 					roomMap.put("Description", Description);
 				}
@@ -325,7 +364,6 @@ public class Room2ApiController extends BaseController {
 
 
 		bizContentData.put("RoomDetail", RoomDetailList);
-
 
 		JSONArray bizContentDataList=new JSONArray();
 		bizContentDataList.add(bizContentData);

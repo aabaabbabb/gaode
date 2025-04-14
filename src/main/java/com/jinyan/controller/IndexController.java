@@ -1,7 +1,5 @@
 package com.jinyan.controller;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
 
@@ -14,11 +12,28 @@ import com.jfinal.kit.HttpKit;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import com.jinyan.service.HotelService;
+import com.jinyan.utils.RedisUtil;
+
+import redis.clients.jedis.Jedis;
 
 @Path(value = "/admin", viewPath = "/admin/index")
 public class IndexController extends Controller{
 
+	@Clear
 	public void index() {
+		try {
+			System.out.println("到这里了");
+			String jedis_key="123";
+			Jedis jedis = RedisUtil.getConn();
+			jedis.set(jedis_key,"http://gd2.tetuijiudian.com/amapapi/hotel/pushRoomInfo?elongId=17004094");
+			jedis.expire(jedis_key, 86400*20);
+			jedis.close();
+			renderText("成功了！"+jedis);
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			renderText(e.getMessage());
+		}
+		renderText("页面");
 		
 	}
 	

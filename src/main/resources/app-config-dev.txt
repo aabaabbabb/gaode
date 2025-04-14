@@ -1,7 +1,7 @@
 # 数据库配置
 jdbcUrl = jdbc:mysql://gd.tetuijiudian.cn:3306/gaode66?useSSL=false&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull
-user=gaode24
-password=Redbull2266_
+user=gaode
+password=GaoDe@702
 
 
 #jdbcUrl = jdbc:mysql://rm-2zeusjfev51pejx51qo.mysql.rds.aliyuncs.com:3306/aligd1?useSSL=false&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull

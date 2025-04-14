@@ -1,31 +1,22 @@
 package com.jinyan.controller;
 
-import com.alibaba.fastjson.JSONArray;
+import java.util.HashMap;
+import java.util.Map;
+
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Strings;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Clear;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Path;
-import com.jfinal.kit.HttpKit;
-import com.jfinal.kit.JsonKit;
-import com.jfinal.plugin.activerecord.Record;
 import com.jinyan.common.GdlogInterceptor;
 import com.jinyan.controller.base.BaseController;
-import com.jinyan.model.*;
-
+import com.jinyan.model.Order;
 import com.jinyan.service.HotelOrderService;
 import com.jinyan.service.HotelService;
 import com.jinyan.service.ReissueInvoiceService;
-import com.jinyan.utils.CommonUtils;
 import com.jinyan.utils.ResponseUtils;
 import com.jinyan.utils.ResponseUtilsOutResponse;
-import org.apache.log4j.Logger;
-
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 // 这个类 用来处理，订单
 

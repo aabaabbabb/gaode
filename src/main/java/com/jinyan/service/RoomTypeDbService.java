@@ -114,9 +114,6 @@ public class RoomTypeDbService {
 
 	public double BedWidth(String bed){
 		double width=1.5;
-
-
-
 		if(bed.contains("米")){
 
 			String regex = "\\d+\\.\\d+";

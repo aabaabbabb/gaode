@@ -157,10 +157,10 @@ public class HotelService {
 					hotel.setSource(0);
 					hotel.setCreated(new Date());
 
-					String url_xdj_dl = "http://call.quchuchai.cn/Gaode/getEmployInfo?HotelID=" + elongIdStr;
+					String url_xdj_dl = "http://call.xiaodianjia.cn/Gaode/getEmployInfo?HotelID=" + elongIdStr;
 					String result_dl = HttpKit.post(url_xdj_dl, null);
 					JSONObject res_json_dl = JSONObject.parseObject(result_dl);
-
+					System.out.println(res_json_dl);
 					JSONObject data = res_json_dl.getJSONObject("data");
 					if (data != null) {
 						hotel.setDlname(data.getString("name"));
